@@ -5,9 +5,21 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { getActiveMealPlan } from '../../services/storage';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+  useEffect(() => {
+    (async () => {
+      const plan = await getActiveMealPlan();
+      if (!plan) {
+        router.replace('/welcome');
+      }
+    })();
+  }, []);
 
   return (
     <Tabs
@@ -17,17 +29,17 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
-        name="index"
+        name="suggestions"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Meals',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="fork.knife" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="grocery-builder"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Groceries',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="cart.fill" color={color} />,
         }}
       />
     </Tabs>
