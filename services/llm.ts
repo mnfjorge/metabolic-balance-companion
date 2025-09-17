@@ -1,5 +1,5 @@
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system/legacy';
+import { File } from 'expo-file-system';
 import OpenAI from 'openai';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,8 +35,8 @@ export async function parseMealPlanPdf(apiKey: string, pdfUri: string, pdfName: 
   if (!openaiClient) configureOpenAI(apiKey);
   if (!openaiClient) throw new Error('OpenAI client not configured');
 
-  const base64Encoding: any = (FileSystem as any).EncodingType?.Base64 ?? 'base64';
-  const fileBase64 = await FileSystem.readAsStringAsync(pdfUri, { encoding: base64Encoding });
+  const file = await File.fromUriAsync(pdfUri);
+  const fileBase64 = await file.readAsStringAsync({ encoding: 'base64' });
 
   const systemPrompt = `You are a nutrition assistant. Extract structured details from the provided meal plan PDF. Return JSON with keys: title (string), caloriesPerDay (number, optional), restrictions (string[]), dislikedIngredients (string[], optional), notes (string, optional). If values not found, omit.`;
 
